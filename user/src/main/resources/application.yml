@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: user-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+logging:
+  level:
+    root: INFO
+    com.ecommerce.user: TRACE
+  file:
+    name: logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 5

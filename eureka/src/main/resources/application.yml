@@ -1,0 +1,36 @@
+#spring:
+#  application:
+#    name: eureka
+#
+#server:
+#  port: 8761
+#
+#eureka:
+#  client:
+#    register-with-eureka: false
+#    fetch-registry: false
+#
+#  server:
+#    enable-self-preservation: false         # ✅ DISABLE for dev
+#    eviction-interval-timer-in-ms: 5000     # ✅ Check every 5s
+#    renewal-percent-threshold: 0.85         # Optional: threshold tweak
+## Disable security for dev to avoid 401
+##  security:
+##    basic:
+##      enabled: false
+
+spring:
+  application:
+    name: eureka
+
+server:
+  port: 8761            # Eureka Server runs on port 8761
+
+eureka:
+  client:
+    register-with-eureka: false   # Eureka server does not register itself
+    fetch-registry: false         # Eureka server does not fetch others
+  server:
+    enable-self-preservation: false         # (DEV only) disables protection mode
+    eviction-interval-timer-in-ms: 5000     # Clean up every 5 sec
+    renewal-percent-threshold: 0.85         # Heartbeat threshold for eviction

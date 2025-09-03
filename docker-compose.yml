@@ -1,0 +1,134 @@
+services:
+  # ──────────────────────────────────────────────────
+#  Zipkin UI → http://localhost:9411
+#
+#  phpMyAdmin → http://localhost:8484
+#
+#  pgAdmin → http://localhost:5050
+#
+#  RabbitMQ UI → http://localhost:15672
+  # MySQL for microservices
+  # ──────────────────────────────────────────────────
+  mysql:
+    container_name: mysql_container
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: embarkx
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: embarkx
+      MYSQL_PASSWORD: embarkx
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────
+  # phpMyAdmin GUI → http://localhost:8484
+  # ──────────────────────────────────────────────────
+  phpmyadmin:
+    container_name: phpmyadmin_container
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: embarkx
+    ports:
+      - "8484:80"
+    networks:
+      - app_network
+    depends_on:
+      - mysql
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────
+  # PostgreSQL for PRODUCT/ORDER micro-services
+  # ──────────────────────────────────────────────────
+  postgres:
+    image: postgres:14
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: ecomuser
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: ecommerce_service_db
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────
+  # pgAdmin GUI → http://localhost:5050
+  # ──────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      GUNICORN_TIMEOUT: 120
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────
+  # RabbitMQ Message Broker (NEWLY ADDED)
+  # ──────────────────────────────────────────────────
+  rabbitmq:
+    container_name: rabbitmq_container
+    image: rabbitmq:management # Using the 'management' tag for the web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # AMQP protocol port for applications
+      - "15672:15672" # Management UI port (access via http://localhost:15672)
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  # ──────────────────────────────────────────────────
+  # Zipkin Distributed Tracing
+  # ──────────────────────────────────────────────────
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - app_network
+#    restart: unless-stopped
+#    environment:
+#      - STORAGE_TYPE=mem   # use 'mysql' for persistence
+#      # If you want MySQL persistence, uncomment below:
+#      # - STORAGE_TYPE=mysql
+#      # - MYSQL_HOST=mysql
+#      # - MYSQL_USER=embarkx
+#      # - MYSQL_PASS=embarkx
+#      # - MYSQL_DB=user_db
+#    depends_on:
+#      - mysql
+
+
+# ──────────────────────────────────────────────────
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  postgres_data:
+  pgadmin_data:
+  rabbitmq_data: # Add a volume for RabbitMQ data persistence

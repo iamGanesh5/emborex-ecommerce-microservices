@@ -1,0 +1,214 @@
+spring:
+  application:
+    name: gateway-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+
+#spring:
+#  application:
+#    name: gateway-service
+##  config:
+##    import: "optional:configserver:http://localhost:8888"
+#  cloud:
+#    gateway:
+#      routes:
+#        # Route to user service
+#        - id: user-service
+#          uri: http://localhost:8082
+#          predicates:
+#            - Path=/api/users/**
+#
+#        # Route to product service
+#        - id: product-service
+#          uri: http://localhost:8081
+#          predicates:
+#            - Path=/api/products/**
+#        # Route to order service
+#        - id: order-service
+#          uri: http://localhost:8083
+#          predicates:
+#            - Path=/api/orders/**
+#
+#        # Route to cart (in order service)
+#        - id: cart-service
+#          uri: http://localhost:8083
+#          predicates:
+#            - Path=/api/cart/**
+##        - id: eureka-server-ui
+##          uri: http://localhost:8761
+##          predicates:
+##            - Path=/eureka/**
+##          filters:
+##            - StripPrefix=1
+#
+###        # Route to order/cart service
+###        - id: order-service
+###          uri: http://localhost:8083
+###          predicates:
+###            - Path=/api/orders/**
+###            - Path=/api/cart/**
+#server:
+#  port: 8080
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+#    org.springframework.cloud.gateway: TRACE
+###    org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+###    org.springframework.cloud.gateway: TRACE
+##
+##
+###  http://localhost:8080/api/users/** ? http://localhost:8082/api/users/**
+###
+###  http://localhost:8080/api/products/** ? http://localhost:8081/api/products/**
+###
+###  http://localhost:8080/api/orders/** ? http://localhost:8083/api/orders/**
+###
+###  http://localhost:8080/api/cart/** ? http://localhost:8083/api/cart/**
+##
+###  spring.application.name=gateway
+###  spring.config.import=optional:configserver:http://localhost:8888
+###
+###  spring.cloud.gateway.routes[0].id=order-service
+###  spring.cloud.gateway.routes[0].uri=lb://ORDER-SERVICE
+###  spring.cloud.gateway.routes[0].predicates[0]=Path=/orders/**
+###  spring.cloud.gateway.routes[0].filters[0]=StripPrefix=1
+###
+###  spring.cloud.gateway.routes[1].id=payment-service
+###  spring.cloud.gateway.routes[1].uri=lb://PAYMENT-SERVICE
+###  spring.cloud.gateway.routes[1].predicates[0]=Path=/payments/**
+###  spring.cloud.gateway.routes[1].filters[0]=StripPrefix=1
+###
+###  spring.cloud.gateway.discovery.locator.enabled=true
+###  spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+#spring:
+#  application:
+#    name: gateway
+#  #  config:
+#  #    import: "optional:configserver:http://localhost:8888"
+#
+#  cloud:
+#    gateway:
+#      routes:
+#        # Route to user service
+#        - id: user-service
+##          uri: http://localhost:8082
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/api/users/**
+#
+#        # Route to product service
+#        - id: product-service
+##          uri: http://localhost:8081
+#          uri: lb://PRODUCT-SERVICE
+#          predicates:
+#            - Path=/api/products/**
+#
+#        # Route to order service
+#        - id: order-service
+##          uri: http://localhost:8083
+#          uri: lb://ORDER-SERVICE
+#
+#          predicates:
+#            - Path=/api/orders/**
+#
+#        # Route to cart service (inside order service)
+#        - id: cart-service
+##          uri: http://localhost:8083
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/api/cart/**
+#        - id: eureka-server
+#          uri: http://localhost:8761
+#          predicates:
+#            - Path=/eureka/main
+#          filters:
+#            - SetPath=/
+#
+#  sleuth:
+#    sampler:
+#      probability: 1.0  # Always sample traces for debugging
+#
+#  zipkin:
+#    base-url: http://localhost:9411
+#    sender:
+#      type: web
+#
+#server:
+#  port: 8080
+
+#logging:
+#  level:
+#    root: INFO
+#    org.springframework.cloud.gateway.route.RouteDefinitionLocator: INFO
+#    org.springframework.cloud.gateway: TRACE
+#spring:
+#  application:
+#    name: gateway # This name is how the gateway registers itself with Eureka
+#  cloud:
+#    gateway:
+#      routes:
+#        # Route to user service (using Eureka for discovery)
+#        - id: user-service
+#          uri: lb://USER-SERVICE # 'lb://' indicates load-balanced lookup in Eureka
+#          predicates:
+#            - Path=/api/users/**
+#
+#        # Route to product service (using Eureka for discovery)
+#        - id: product-service
+#          uri: lb://PRODUCT-SERVICE
+#          predicates:
+#            - Path=/api/products/**
+#
+#        # Route to order service (using Eureka for discovery)
+#        - id: order-service
+#          uri: lb://ORDER-SERVICE
+#          predicates:
+#            - Path=/api/orders/**
+#
+#        # Route to cart service (also part of order service, using Eureka)
+#        - id: cart-service
+#          uri: lb://ORDER-SERVICE # Assuming cart endpoints are within the order service
+#          predicates:
+#            - Path=/api/cart/**
+#
+#        # Route to directly access the Eureka dashboard via the gateway
+#        - id: eureka-server-ui # A descriptive ID for the Eureka UI route
+#          uri: http://localhost:8761 # Direct URI to your Eureka server
+#          predicates:
+#            - Path=/eureka/main # Example path to access Eureka UI through gateway
+#          filters:
+#            - SetPath=/ # Rewrites /eureka/main to / for Eureka UI root
+#
+#  # Spring Sleuth for distributed tracing
+#  sleuth:
+#    sampler:
+#      probability: 1.0  # Set to 1.0 for full tracing during development/debugging
+#
+#  # Zipkin for trace visualization
+#  zipkin:
+#    base-url: http://localhost:9411 # URL for your Zipkin server
+#    sender:
+#      type: web # Use HTTP to send traces to Zipkin
+#
+#server:
+#  port: 8080 # The port on which your Gateway service will run
+#
+## Eureka Client configuration for the Gateway itself
+#eureka:
+#  client:
+#    # Set to true for gateway to register itself with Eureka
+#    # Even if it's a gateway, it might expose its own endpoints or health checks
+#    register-with-eureka: true
+#    # Set to true to fetch registry information from Eureka
+#    fetch-registry: true
+#    # Point to the default zone (URL) of your Eureka Server
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/ # IMPORTANT: This must be correct!
+#  instance:
+#    # Use IP address for registration, can sometimes help with network issues in containers
+#    preferIpAddress: true
+#    # Hostname the gateway will register with. Use 'localhost' for local setup.
+#    # For Docker, this might need to be 'host.docker.internal' if Eureka is on host machine.
+#    hostname: localhost

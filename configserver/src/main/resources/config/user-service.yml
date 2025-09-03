@@ -1,0 +1,105 @@
+#spring:
+#  application:
+#    name: user-service
+#
+#  datasource:
+#    url: jdbc:mysql://localhost:3307/user_db?serverTimezone=Asia/Kolkata
+#    username: embarkx
+#    password: embarkx
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL8Dialect
+#
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#
+#server:
+#  port: 8082
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#    register-with-eureka: true
+#    fetch-registry: true
+#logging:
+#  file:
+#    name: logs/${spring.application.name}.log
+#  logback:
+#    rollingpolicy:
+#      max-file-size: 5MB
+#      max-history: 5
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  tracing:
+#    sampling:
+#      probability: 1.0
+#
+#app:
+#  message: "HELLO"
+spring:
+  application:
+    name: user-service   # Registers in Eureka with this name
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/user_db?serverTimezone=Asia/Kolkata
+    username: embarkx
+    password: embarkx
+    driver-class-name: com.mysql.cj.jdbc.Driver   # MySQL driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update     # Auto-update schema (good for dev, risky for prod)
+    show-sql: true         # Logs SQL queries
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect  # Optimized for MySQL 8
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest         # RabbitMQ connection for async messaging
+
+server:
+  port: 8082                # User Service runs on port 8082
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka   # Points to Eureka server
+    register-with-eureka: true   # Registers this service with Eureka
+    fetch-registry: true         # Fetches registry (other services)
+
+logging:
+  file:
+    name: logs/${spring.application.name}.log   # Log file = logs/user-service.log
+  logback:
+    rollingpolicy:
+      max-file-size: 5MB
+      max-history: 5     # Keeps last 5 rotated logs (older ones deleted)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"     # Exposes all actuator endpoints (health, metrics, etc.)
+  tracing:
+    sampling:
+      probability: 1.0   # Enables distributed tracing (100% requests traced)
+
+app:
+  message: "HELLO"       # Custom app property (can inject via @Value)

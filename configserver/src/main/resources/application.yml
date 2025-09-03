@@ -1,0 +1,34 @@
+#spring.application.name=configserver # This line is commented out, which is fine
+  server:
+    port: 8888
+
+  spring:
+    application:
+      name: configserver
+    profiles:
+      active: native
+    cloud:
+      config:
+        server:
+          native:
+            # This is the correct path for native profile, as discussed.
+            # Ensure this path is correct on your system.
+            search-locations: file:///C:/Users/ganes/ecom-microservice/configserver/src/main/resources/config
+            # ^^^^^ IMPORTANT: Use 'file:///' and your full absolute path here for dynamic re-reading.
+            # If you want to stick to classpath for now, it's 'classpath:/config'
+            # But for dynamic refresh, 'file:///' is needed as per your walkthrough.
+
+    # Corrected indentation: rabbitmq should be directly under 'spring:'
+    rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+
+  # Corrected indentation: management should be a top-level key
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+
