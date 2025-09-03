@@ -12,7 +12,7 @@ public class MessageController {
     @Value("${app.message}")
     private String message;
 
-    @GetMapping("/message")
+    @GetMapping("/messages")
     public String message() {
         return message;
     }
