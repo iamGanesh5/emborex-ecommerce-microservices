@@ -1,6 +1,4 @@
 package com.ecommerce.order.services;
-
-
 import com.ecommerce.order.clients.ProductServicesClientConfig;
 import com.ecommerce.order.clients.UserServiceClient;
 import com.ecommerce.order.clients.UserServicesClientConfig;
@@ -10,6 +8,7 @@ import com.ecommerce.order.models.CartAddStatus;
 import com.ecommerce.order.models.CartItem;
 import com.ecommerce.order.repository.CartItemRepository;
 import com.ecommerce.user.dto.UserResponse;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +20,17 @@ import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartServiceImp implements CartService {
+
     private final CartItemRepository cartItemRepository;
     private final ProductServicesClientConfig productServicesClientConfig;
     private final UserServiceClient userServiceClient;
+
 //    private  final UserRepository userRepository;
 //    private final ProductRepository productRepository;
-
+//@CircuitBreaker(name = "productService", fallbackMethod = "fallback")
+   @CircuitBreaker(name = "productService", fallbackMethod = "fallbackAddToCart")
     @Override
     public boolean addToCart(String userId, CartItemRequest request) {
         // 1. Fetch product details and check stock
@@ -65,6 +68,13 @@ public class CartServiceImp implements CartService {
         }
 
         return true;
+    }
+    // fallback method must have same signature + Throwable param
+    public boolean fallbackAddToCart(String userId, CartItemRequest request, Exception t) {
+//        System.out.println("Fallback triggered due to: " + t.getMessage());
+        t.printStackTrace();
+        // maybe return false, or default behavior
+        return false;
     }
 
 //@Override
