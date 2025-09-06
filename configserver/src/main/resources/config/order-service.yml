@@ -1,3 +1,46 @@
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/ecommerce_service_db
+#    driver-class-name: org.postgresql.Driver
+#    username: ecomuser
+#    password: secret123
+#
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+#
+#server:
+#  port: 8083
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#    register-with-eureka: true
+#    fetch-registry: true
+#logging:
+#  file:
+#    name: logs/${spring.application.name}.log
+#  logback:
+#    rolling policy:
+#      max-file-size: 5MB
+#      max-history: 5
+#management:
+#  tracing:
+#    sampling:
+#      probability: 1.0
+#
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#  endpoint:
+#    health:
+#      show-details: always
+
+#  http://localhost:8083/actuator/health
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/ecommerce_service_db
@@ -14,20 +57,46 @@ spring:
 
 server:
   port: 8083
+
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
     register-with-eureka: true
     fetch-registry: true
+
 logging:
   file:
     name: logs/${spring.application.name}.log
-  logback:
-    rolling policy:
-      max-file-size: 5MB
-      max-history: 5
+  # Note: logback rolling policies must be configured in logback-spring.xml, not here
+
 management:
   tracing:
     sampling:
       probability: 1.0
+
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  endpoint:
+    health:
+      show-details: always
+
+  health:
+    circuitbreakers:
+      enabled: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 10s
+        failureRateThreshold: 50
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slidingWindowType: count_based
